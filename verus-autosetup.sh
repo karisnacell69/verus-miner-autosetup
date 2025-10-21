@@ -11,14 +11,14 @@ echo "=============================="
 
 # Update & install dependencies
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y git build-essential cmake automake libtool autoconf screen htop
+sudo apt install -y git build-essential cmake automake libtool autoconf screen htop curl
 
-# Clone and build cpuminer-verus
+# Clone and build ccminer
 cd /usr/local/src
-if [ ! -d "cpuminer-verus" ]; then
-    sudo git clone https://github.com/VerusCoin/cpuminer-verus.git
+if [ ! -d "ccminer" ]; then
+    sudo git clone https://github.com/monkins1010/ccminer.git
 fi
-cd cpuminer-verus
+cd ccminer
 sudo ./build.sh
 
 # Input wallet info
@@ -42,7 +42,7 @@ EOF
 
 sudo chmod +x /usr/local/bin/verusmine.sh
 
-# Create systemd service for auto-run
+# Create systemd service
 sudo tee /etc/systemd/system/verus.service > /dev/null <<EOF
 [Unit]
 Description=VerusCoin Miner
