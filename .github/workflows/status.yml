@@ -1,0 +1,33 @@
+name: Verus Miner Status
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"  # Update setiap 30 menit
+  workflow_dispatch:
+
+jobs:
+  check-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cek status miner di Luckpool
+        run: |
+          WALLET="RYSCQiCeQc23JbxzypAhR7dp8d1ecMQkVb"
+          echo "⛏️ Checking miner status for $WALLET"
+          curl -s "https://luckpool.net/verus/miner/$WALLET" -o miner.html || true
+          if grep -q "Hashrate" miner.html; then
+            echo "✅ Miner aktif dan berjalan!"
+            echo "status=active" >> $GITHUB_ENV
+          else
+            echo "⚠️ Miner belum terdeteksi!"
+            echo "status=inactive" >> $GITHUB_ENV
+          fi
+
+      - name: Update badge status
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.GITHUB_TOKEN }}
+          gistID: ""
+          filename: "verus-status.json"
+          label: "Verus Miner"
+          message: "${{ env.status }}"
+          color: ${{ env.status == 'active' && 'brightgreen' || 'red' }}
